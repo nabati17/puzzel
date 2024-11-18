@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Permainan Kubus Geser</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .grid {
+      width: 100px;
+      height: 100px;
+      background-color: #e0e0e0;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .movable {
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Permainan Kubus Geser</h1>
+  <div id="game-board">
+    <!-- Kotak-kotak grid dengan ID sesuai posisi -->
+    <div class="grid" id="1">1</div>
+    <div class="grid" id="2">2</div>
+    <div class="grid" id="3">3</div>
+    <div class="grid" id="4">4</div>
+    <div class="grid" id="5">5</div>
+    <div class="grid" id="6">6</div>
+    <div class="grid" id="7">7</div>
+    <div class="grid" id="8"></div> <!-- Tempat kosong -->
+  </div>
+  <p id="status">Pindahkan kubus hingga semua berada di posisi akhir!</p>
+  
+  <script>
+    const gameBoard = document.getElementById('game-board');
+    const status = document.getElementById('status');
+    const finalPosition = ['1', '2', '3', '4', '5', '6', '7', ''];
+
+    function createGame() {
+      gameBoard.addEventListener('click', moveKubus);
+    }
+
+    function moveKubus(event) {
+      const target = event.target;
+
+      if (!target.classList.contains('grid') || !target.textContent) {
+        return; // Abaikan klik pada kotak kosong atau area luar grid
+      }
+
+      const emptyGrid = findEmptyGrid();
+      const targetId = parseInt(target.id);
+      const emptyId = parseInt(emptyGrid.id);
+
+      if (isAdjacent(targetId, emptyId)) {
+        // Tukar isi grid
+        emptyGrid.textContent = target.textContent;
+        target.textContent = '';
+        checkWin();
+      }
+    }
+
+    function findEmptyGrid() {
+      return Array.from(document.querySelectorAll('.grid')).find(grid => grid.textContent === '');
+    }
+
+    function isAdjacent(id1, id2) {
+      const adjacentPositions = {
+        1: [2, 4],
+        2: [1, 3, 5],
+        3: [2, 6],
+        4: [1, 5, 7],
+        5: [2, 4, 6, 8],
+        6: [3, 5, 9],
+        7: [4, 8],
+        8: [5, 7]
+      };
+      return adjacentPositions[id1].includes(id2);
+    }
+
+    function checkWin() {
+      const gridContents = Array.from(document.querySelectorAll('.grid')).map(grid => grid.textContent || '');
+      if (gridContents.join('') === finalPosition.join('')) {
+        status.textContent = 'Selamat! Anda berhasil!';
+      }
+    }
+
+    createGame();
+  </script>
+</body>
+</html>
